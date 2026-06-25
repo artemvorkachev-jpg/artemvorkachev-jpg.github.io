@@ -3,33 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Hello World - Список задач</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Arial', sans-serif;
+            padding: 20px;
         }
+
         .hello-world {
-            font-size: 72px;
+            font-size: clamp(32px, 8vw, 72px);
             font-weight: bold;
             color: white;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             animation: fadeIn 2s ease-in;
+            margin-bottom: 40px;
         }
+
+        .todo-container {
+            background: white;
+            border-radius: 16px;
+            padding: clamp(15px, 4vw, 30px);
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1s ease-out;
+        }
+
+        .todo-header {
+            font-size: clamp(20px, 5vw, 28px);
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .todo-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .todo-add-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .todo-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .todo-add-btn:active {
+            transform: translateY(0);
+        }
+
+        .todo-list {
+            list-style: none;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .todo-item:hover {
+            background: #e9ecef;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .todo-delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .todo-delete-btn:hover {
+            background: #ff3838;
+        }
+
+        .todo-stats {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .todo-input-container {
+                flex-direction: column;
+            }
+            
+            .todo-add-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="hello-world">Hello world!</div>
+    
+    <div class="todo-container">
+        <h2 class="todo-header">📝 Список задач</h2>
+        
+        <div class="todo-input-container">
+            <input type="text" class="todo-input" id="todoInput" placeholder="Введите новую задачу...">
+            <button class="todo-add-btn" onclick="addTodo()">Добавить</button>
+        </div>
+        
+        <ul class="todo-list" id="todoList"></ul>
+        
+        <div class="todo-stats" id="todoStats"></div>
+    </div>
+
+    <script>
+        // Загрузка задач из localStorage
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        // Сохранение задач в localStorage
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        // Отображение списка задач
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            const todoStats = document.getElementById('todoStats');
+            
+            todoList.innerHTML = '';
+            
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                
+                li.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" 
+                           ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${index})">
+                    <span class="todo-text">${escapeHtml(todo.text)}</span>
+                    <button class="todo-delete-btn" onclick="deleteTodo(${index})">Удалить</button>
+                `;
+                
+                todoList.appendChild(li);
+            });
+            
+            const completedCount = todos.filter(t => t.completed).length;
+            todoStats.textContent = `Всего: ${todos.length} | Выполнено: ${completedCount} | Осталось: ${todos.length - completedCount}`;
+        }
+
+        // Экранирование HTML для безопасности
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Добавление новой задачи
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                todos.push({ text: text, completed: false });
+                saveTodos();
+                renderTodos();
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Переключение статуса задачи
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            saveTodos();
+            renderTodos();
+        }
+
+        // Удаление задачи
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+        }
+
+        // Обработка нажатия Enter
+        document.getElementById('todoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        // Начальная отрисовка
+        renderTodos();
+    </script>
 </body>
 </html>
