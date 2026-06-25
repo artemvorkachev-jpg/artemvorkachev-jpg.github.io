@@ -11,8 +11,14 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
         body {
             min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport height for mobile */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -20,6 +26,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Arial', sans-serif;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .hello-world {
@@ -159,6 +166,10 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
             .todo-input-container {
                 flex-direction: column;
             }
