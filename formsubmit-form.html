@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form - FormSubmit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        form {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #354d91;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2a3d75;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contact Form</h1>
+    <p>This form uses FormSubmit to send submissions directly to email without any backend code.</p>
+    
+    <form action="https://formsubmit.co/YOUR_EMAIL_HERE" method="POST">
+        <!-- FormSubmit configuration -->
+        <input type="hidden" name="_subject" value="New Contact Form Submission">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        
+        <!-- Your email for reply-to -->
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required placeholder="your@email.com">
+        
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required placeholder="Your Name">
+        
+        <label for="message">Message:</label>
+        <textarea name="message" id="message" rows="5" required placeholder="Your message here..."></textarea>
+        
+        <button type="submit">Send Message</button>
+    </form>
+    
+    <p><strong>Note:</strong> Replace <code>YOUR_EMAIL_HERE</code> in the form action with your actual email address. The first submission will require email confirmation.</p>
+</body>
+</html>
