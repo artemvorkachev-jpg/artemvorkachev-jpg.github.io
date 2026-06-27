@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="application-name" content="Помощник">
-    <title>Hello World - Список задач</title>
+    <meta name="application-name" content="TaskMaster Pro">
+    <title>TaskMaster Pro - Умный помощник</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
@@ -28,7 +28,7 @@
 
         body {
             min-height: 100vh;
-            min-height: 100dvh; /* Dynamic viewport height for mobile */
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -39,14 +39,22 @@
             overflow-x: hidden;
         }
 
-        .hello-world {
+        .site-title {
             font-size: clamp(32px, 8vw, 72px);
             font-weight: bold;
             color: white;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             animation: fadeIn 2s ease-in;
+            margin-bottom: 10px;
+        }
+
+        .site-subtitle {
+            font-size: clamp(16px, 4vw, 24px);
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
             margin-bottom: 40px;
+            animation: fadeIn 2.5s ease-in;
         }
 
         .todo-container {
@@ -164,6 +172,39 @@
             margin-top: 20px;
             color: #666;
             font-size: 14px;
+        }
+
+        .achievement-banner {
+            display: none;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-banner h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .achievement-banner p {
+            font-size: 16px;
+        }
+
+        .achievement-close {
+            background: white;
+            color: #f5576c;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-left: 10px;
         }
 
         .buttons-container {
@@ -349,7 +390,18 @@
     </style>
 </head>
 <body>
-    <div class="hello-world">Hello world!</div>
+    <div class="site-title">TaskMaster Pro</div>
+    <div class="site-subtitle">Умный помощник для управления задачами</div>
+    
+    <div class="achievement-banner" id="achievementBanner">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <div>
+                <h3>🎉 Поздравляем!</h3>
+                <p>Вы выполнили 10 задач! Так держать! Так вы продвигаете этот сайт вперед!</p>
+            </div>
+            <button class="achievement-close" onclick="closeAchievement()">×</button>
+        </div>
+    </div>
     
     <div class="todo-container">
         <h2 class="todo-header">📝 Список задач</h2>
@@ -376,7 +428,7 @@
             <span class="close" onclick="closeModal('feedbackModal')">&times;</span>
             <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Обратная связь</h2>
             <form id="feedbackForm" action="https://formsubmit.co/vorkachev2@gmail.com" method="POST">
-                <input type="hidden" name="_subject" value="Новая обратная связь с сайта">
+                <input type="hidden" name="_subject" value="Новая обратная связь с TaskMaster Pro">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_template" value="table">
                 <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io">
@@ -410,6 +462,7 @@
                     <li><strong>Выполнение задачи:</strong> Нажмите на чекбокс слева от задачи</li>
                     <li><strong>Удаление задачи:</strong> Нажмите кнопку "Удалить" справа от задачи</li>
                     <li><strong>Статистика:</strong> Внизу отображается количество всех, выполненных и оставшихся задач</li>
+                    <li><strong>Достижения:</strong> За выполнение 10 задач вы получите поздравление!</li>
                 </ul>
                 <h3>Техническая поддержка:</h3>
                 <p>Если у вас возникли проблемы или вопросы, напишите на почту: <a href="mailto:vorkachev2@gmail.com" style="color: #667eea;">vorkachev2@gmail.com</a></p>
@@ -424,7 +477,7 @@
             <span class="close" onclick="closeModal('suggestionsModal')">&times;</span>
             <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Пожелания по развитию</h2>
             <form id="suggestionsForm" action="https://formsubmit.co/vorkachev2@gmail.com" method="POST">
-                <input type="hidden" name="_subject" value="Новые пожелания по развитию с сайта">
+                <input type="hidden" name="_subject" value="Новые пожелания по развитию TaskMaster Pro">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_template" value="table">
                 <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io">
@@ -447,12 +500,19 @@
     </div>
 
     <script>
-        // Загрузка задач из localStorage
+        // Загрузка данных из localStorage
         let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let totalCompleted = parseInt(localStorage.getItem('totalCompleted')) || 0;
+        let lastMilestone = parseInt(localStorage.getItem('lastMilestone')) || 0;
 
-        // Сохранение задач в localStorage
+        // Сохранение данных в localStorage
         function saveTodos() {
             localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function saveStats() {
+            localStorage.setItem('totalCompleted', totalCompleted.toString());
+            localStorage.setItem('lastMilestone', lastMilestone.toString());
         }
 
         // Отображение списка задач
@@ -478,7 +538,7 @@
             });
             
             const completedCount = todos.filter(t => t.completed).length;
-            todoStats.textContent = `Всего: ${todos.length} | Выполнено: ${completedCount} | Осталось: ${todos.length - completedCount}`;
+            todoStats.textContent = `Всего: ${todos.length} | Выполнено: ${completedCount} | Осталось: ${todos.length - completedCount} | Всего выполнено: ${totalCompleted}`;
         }
 
         // Экранирование HTML для безопасности
@@ -504,7 +564,23 @@
 
         // Переключение статуса задачи
         function toggleTodo(index) {
+            const wasCompleted = todos[index].completed;
             todos[index].completed = !todos[index].completed;
+            
+            if (todos[index].completed && !wasCompleted) {
+                totalCompleted++;
+                
+                // Проверка на достижение 10 задач
+                const newMilestone = Math.floor(totalCompleted / 10);
+                if (newMilestone > lastMilestone) {
+                    lastMilestone = newMilestone;
+                    showAchievement();
+                    sendMilestoneEmail(totalCompleted);
+                }
+                
+                saveStats();
+            }
+            
             saveTodos();
             renderTodos();
         }
@@ -514,6 +590,38 @@
             todos.splice(index, 1);
             saveTodos();
             renderTodos();
+        }
+
+        // Показать достижение
+        function showAchievement() {
+            const banner = document.getElementById('achievementBanner');
+            banner.style.display = 'block';
+        }
+
+        // Закрыть достижение
+        function closeAchievement() {
+            document.getElementById('achievementBanner').style.display = 'none';
+        }
+
+        // Отправить email о достижении
+        function sendMilestoneEmail(completedCount) {
+            const subject = encodeURIComponent(`Пользователь выполнил ${completedCount} задач!`);
+            const body = encodeURIComponent(`Пользователь успешно выполнил ${completedCount} задач!\n\nЭто замечательный результат! Так держать!`);
+            
+            // Отправляем через FormSubmit
+            fetch('https://formsubmit.co/vorkachev2@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: `Пользователь выполнил ${completedCount} задач!`,
+                    message: `Пользователь успешно выполнил ${completedCount} задач! Это замечательный результат! Так держать!`,
+                    _captcha: 'false',
+                    _template: 'table'
+                })
+            }).catch(error => console.log('Email notification sent'));
         }
 
         // Обработка нажатия Enter
