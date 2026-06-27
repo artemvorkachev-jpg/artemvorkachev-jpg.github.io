@@ -290,6 +290,26 @@
             margin-bottom: 5px;
         }
 
+        .status-message {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -355,19 +375,24 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('feedbackModal')">&times;</span>
             <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Обратная связь</h2>
-            <form id="feedbackForm">
+            <form id="feedbackForm" action="https://formsubmit.co/vorkachev2@gmail.com" method="POST">
+                <input type="hidden" name="_subject" value="Новая обратная связь с сайта">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io">
                 <div class="form-group">
                     <label for="feedbackName">Ваше имя:</label>
-                    <input type="text" id="feedbackName" required>
+                    <input type="text" id="feedbackName" name="name" required>
                 </div>
                 <div class="form-group">
                     <label for="feedbackEmail">Ваш email:</label>
-                    <input type="email" id="feedbackEmail" required>
+                    <input type="email" id="feedbackEmail" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="feedbackMessage">Сообщение:</label>
-                    <textarea id="feedbackMessage" rows="5" required></textarea>
+                    <textarea id="feedbackMessage" name="message" rows="5" required></textarea>
                 </div>
+                <div id="feedbackStatus" class="status-message"></div>
                 <button type="submit" class="submit-btn">Отправить</button>
             </form>
         </div>
@@ -398,19 +423,24 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('suggestionsModal')">&times;</span>
             <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Пожелания по развитию</h2>
-            <form id="suggestionsForm">
+            <form id="suggestionsForm" action="https://formsubmit.co/vorkachev2@gmail.com" method="POST">
+                <input type="hidden" name="_subject" value="Новые пожелания по развитию с сайта">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io">
                 <div class="form-group">
                     <label for="suggestionName">Ваше имя:</label>
-                    <input type="text" id="suggestionName" required>
+                    <input type="text" id="suggestionName" name="name" required>
                 </div>
                 <div class="form-group">
                     <label for="suggestionEmail">Ваш email:</label>
-                    <input type="email" id="suggestionEmail" required>
+                    <input type="email" id="suggestionEmail" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="suggestionMessage">Ваши пожелания:</label>
-                    <textarea id="suggestionMessage" rows="5" required></textarea>
+                    <textarea id="suggestionMessage" name="message" rows="5" required></textarea>
                 </div>
+                <div id="suggestionsStatus" class="status-message"></div>
                 <button type="submit" class="submit-btn">Отправить</button>
             </form>
         </div>
@@ -512,35 +542,75 @@
             }
         }
 
-        // Form submissions
+        // Form submissions with AJAX for better UX
         document.getElementById('feedbackForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('feedbackName').value;
-            const email = document.getElementById('feedbackEmail').value;
-            const message = document.getElementById('feedbackMessage').value;
+            const statusDiv = document.getElementById('feedbackStatus');
+            const formData = new FormData(this);
             
-            // Create mailto link
-            const subject = encodeURIComponent(`Обратная связь от ${name}`);
-            const body = encodeURIComponent(`Имя: ${name}\nEmail: ${email}\n\nСообщение:\n${message}`);
-            window.location.href = `mailto:vorkachev2@gmail.com?subject=${subject}&body=${body}`;
-            
-            closeModal('feedbackModal');
-            this.reset();
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusDiv.className = 'status-message status-success';
+                    statusDiv.textContent = 'Сообщение успешно отправлено!';
+                    statusDiv.style.display = 'block';
+                    this.reset();
+                    setTimeout(() => {
+                        closeModal('feedbackModal');
+                        statusDiv.style.display = 'none';
+                    }, 2000);
+                } else {
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.textContent = 'Ошибка при отправке. Попробуйте еще раз.';
+                    statusDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                statusDiv.className = 'status-message status-error';
+                statusDiv.textContent = 'Ошибка при отправке. Попробуйте еще раз.';
+                statusDiv.style.display = 'block';
+            });
         });
 
         document.getElementById('suggestionsForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('suggestionName').value;
-            const email = document.getElementById('suggestionEmail').value;
-            const message = document.getElementById('suggestionMessage').value;
+            const statusDiv = document.getElementById('suggestionsStatus');
+            const formData = new FormData(this);
             
-            // Create mailto link
-            const subject = encodeURIComponent(`Пожелания по развитию от ${name}`);
-            const body = encodeURIComponent(`Имя: ${name}\nEmail: ${email}\n\nПожелания:\n${message}`);
-            window.location.href = `mailto:vorkachev2@gmail.com?subject=${subject}&body=${body}`;
-            
-            closeModal('suggestionsModal');
-            this.reset();
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusDiv.className = 'status-message status-success';
+                    statusDiv.textContent = 'Пожелания успешно отправлены!';
+                    statusDiv.style.display = 'block';
+                    this.reset();
+                    setTimeout(() => {
+                        closeModal('suggestionsModal');
+                        statusDiv.style.display = 'none';
+                    }, 2000);
+                } else {
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.textContent = 'Ошибка при отправке. Попробуйте еще раз.';
+                    statusDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                statusDiv.className = 'status-message status-error';
+                statusDiv.textContent = 'Ошибка при отправке. Попробуйте еще раз.';
+                statusDiv.style.display = 'block';
+            });
         });
     </script>
 </body>
