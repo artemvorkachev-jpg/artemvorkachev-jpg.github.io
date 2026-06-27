@@ -41,17 +41,26 @@
         button:hover {
             background: #2a3d75;
         }
+        .error-note {
+            color: #d9534f;
+            margin-top: 20px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <h1>Contact Form</h1>
-    <p>This form uses FormSubmit to send submissions directly to email without any backend code.</p>
+    <p>This form uses FormSubmit to send submissions directly to vorkachev2@gmail.com</p>
     
     <form action="https://formsubmit.co/vorkachev2@gmail.com" method="POST">
         <!-- FormSubmit configuration -->
-        <input type="hidden" name="_subject" value="New Contact Form Submission">
+        <input type="hidden" name="_subject" value="New Contact Form Submission from Website">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io/formsubmit-form.html">
+        
+        <!-- Honeypot field for spam protection (hidden) -->
+        <input type="text" name="_honey" style="display:none">
         
         <!-- Your email for reply-to -->
         <label for="email">Email:</label>
@@ -66,6 +75,6 @@
         <button type="submit">Send Message</button>
     </form>
     
-    <p><strong>Note:</strong> The first submission will require email confirmation at vorkachev2@gmail.com</p>
+    <p class="error-note"><strong>Important:</strong> After the first submission, check vorkachev2@gmail.com for a confirmation email from FormSubmit. You must click the confirmation link in that email before the form will work properly.</p>
 </body>
 </html>
