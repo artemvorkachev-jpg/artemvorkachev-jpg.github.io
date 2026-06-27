@@ -48,21 +48,36 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
+        .error {
+            background: #f2dede;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #a94442;
+        }
+        .success {
+            background: #dff0d8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #3c763d;
+        }
     </style>
 </head>
 <body>
     <h1>Contact Form</h1>
     
     <div class="info">
-        <strong>Important:</strong> After your first submission, check your email (vorkachev2@gmail.com) for a confirmation email from FormSubmit. You MUST click the confirmation link in that email before the form will work.
+        <strong>Important:</strong> After your first submission, check vorkachev2@gmail.com for a confirmation email from FormSubmit. You MUST click the confirmation link before the form works.
     </div>
     
-    <form action="https://formsubmit.co/ajax" method="POST" id="contactForm">
-        <!-- FormSubmit settings -->
+    <form action="https://formsubmit.co/vorkachev2@gmail.com" method="POST" id="contactForm">
+        <!-- FormSubmit settings - using correct format -->
         <input type="hidden" name="_subject" value="New message from website">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_to" value="vorkachev2@gmail.com">
         
         <!-- Email field -->
         <label for="email">Your Email *</label>
@@ -79,35 +94,46 @@
         <button type="submit" id="submitBtn">Send Message</button>
     </form>
     
-    <div id="responseMessage" style="margin-top: 20px;"></div>
+    <div id="responseMessage"></div>
     
     <script>
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            var formData = new FormData(this);
+            var form = this;
             var submitBtn = document.getElementById('submitBtn');
             var responseMsg = document.getElementById('responseMessage');
             
+            // Disable button to prevent double submission
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
-            responseMsg.innerHTML = '<p style="color: #354d91;">Sending your message...</p>';
+            responseMsg.innerHTML = '<div class="info">Sending your message...</div>';
             
+            // Get form data
+            var formData = new FormData(form);
+            
+            // Use fetch to send to FormSubmit
             fetch('https://formsubmit.co/ajax', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    responseMsg.innerHTML = '<p style="color: green;">✓ Message sent successfully! Check your email for confirmation if this is your first submission.</p>';
-                    document.getElementById('contactForm').reset();
+                    responseMsg.innerHTML = '<div class="success">✓ Message sent successfully! If this is your first submission, check vorkachev2@gmail.com for a confirmation email.</div>';
+                    form.reset();
                 } else {
-                    responseMsg.innerHTML = '<p style="color: red;">✗ Error: ' + (data.message || 'Please try again') + '</p>';
+                    responseMsg.innerHTML = '<div class="error">✗ Error: ' + (data.message || 'Please try again') + '</div>';
                 }
             })
             .catch(error => {
-                responseMsg.innerHTML = '<p style="color: red;">✗ Error sending message. Please try again.</p>';
+                console.error('Error:', error);
+                responseMsg.innerHTML = '<div class="error">✗ Error sending message. Please try again later.</div>';
             })
             .finally(() => {
                 submitBtn.disabled = false;
