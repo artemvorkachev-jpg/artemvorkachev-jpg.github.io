@@ -41,31 +41,30 @@
         button:hover {
             background: #2a3d75;
         }
-        .success-message {
-            display: none;
-            background: #dff0d8;
+        .info {
+            background: #d9edf7;
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <h1>Contact Form</h1>
-    <p>Send a message to vorkachev2@gmail.com</p>
     
-    <div class="success-message" id="successMsg">
-        Thank you! Your message has been sent successfully.
+    <div class="info">
+        <strong>Important:</strong> After your first submission, check your email (vorkachev2@gmail.com) for a confirmation email from FormSubmit. You MUST click the confirmation link in that email before the form will work.
     </div>
     
-    <form action="https://formsubmit.co/vorkachev2@gmail.com" method="POST" id="contactForm">
+    <form action="https://formsubmit.co/ajax" method="POST" id="contactForm">
         <!-- FormSubmit settings -->
         <input type="hidden" name="_subject" value="New message from website">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io/formsubmit-form.html?sent=true">
+        <input type="hidden" name="_to" value="vorkachev2@gmail.com">
         
-        <!-- Email field (required by FormSubmit) -->
+        <!-- Email field -->
         <label for="email">Your Email *</label>
         <input type="email" id="email" name="email" required placeholder="your@email.com">
         
@@ -77,14 +76,44 @@
         <label for="message">Your Message *</label>
         <textarea id="message" name="message" rows="5" required placeholder="Type your message here..."></textarea>
         
-        <button type="submit">Send Message</button>
+        <button type="submit" id="submitBtn">Send Message</button>
     </form>
     
+    <div id="responseMessage" style="margin-top: 20px;"></div>
+    
     <script>
-        // Show success message if redirected back
-        if (window.location.search.includes('sent=true')) {
-            document.getElementById('successMsg').style.display = 'block';
-        }
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            var submitBtn = document.getElementById('submitBtn');
+            var responseMsg = document.getElementById('responseMessage');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            responseMsg.innerHTML = '<p style="color: #354d91;">Sending your message...</p>';
+            
+            fetch('https://formsubmit.co/ajax', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    responseMsg.innerHTML = '<p style="color: green;">✓ Message sent successfully! Check your email for confirmation if this is your first submission.</p>';
+                    document.getElementById('contactForm').reset();
+                } else {
+                    responseMsg.innerHTML = '<p style="color: red;">✗ Error: ' + (data.message || 'Please try again') + '</p>';
+                }
+            })
+            .catch(error => {
+                responseMsg.innerHTML = '<p style="color: red;">✗ Error sending message. Please try again.</p>';
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+            });
+        });
     </script>
 </body>
 </html>
