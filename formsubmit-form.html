@@ -41,40 +41,50 @@
         button:hover {
             background: #2a3d75;
         }
-        .error-note {
-            color: #d9534f;
-            margin-top: 20px;
-            font-size: 14px;
+        .success-message {
+            display: none;
+            background: #dff0d8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <h1>Contact Form</h1>
-    <p>This form uses FormSubmit to send submissions directly to vorkachev2@gmail.com</p>
+    <p>Send a message to vorkachev2@gmail.com</p>
     
-    <form action="https://formsubmit.co/vorkachev2@gmail.com" method="POST">
-        <!-- FormSubmit configuration -->
-        <input type="hidden" name="_subject" value="New Contact Form Submission from Website">
+    <div class="success-message" id="successMsg">
+        Thank you! Your message has been sent successfully.
+    </div>
+    
+    <form action="https://formsubmit.co/vorkachev2@gmail.com" method="POST" id="contactForm">
+        <!-- FormSubmit settings -->
+        <input type="hidden" name="_subject" value="New message from website">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io/formsubmit-form.html">
+        <input type="hidden" name="_next" value="https://artemvorkachev-jpg.github.io/formsubmit-form.html?sent=true">
         
-        <!-- Honeypot field for spam protection (hidden) -->
-        <input type="text" name="_honey" style="display:none">
+        <!-- Email field (required by FormSubmit) -->
+        <label for="email">Your Email *</label>
+        <input type="email" id="email" name="email" required placeholder="your@email.com">
         
-        <!-- Your email for reply-to -->
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required placeholder="your@email.com">
+        <!-- Name field -->
+        <label for="name">Your Name *</label>
+        <input type="text" id="name" name="name" required placeholder="John Doe">
         
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required placeholder="Your Name">
-        
-        <label for="message">Message:</label>
-        <textarea name="message" id="message" rows="5" required placeholder="Your message here..."></textarea>
+        <!-- Message field -->
+        <label for="message">Your Message *</label>
+        <textarea id="message" name="message" rows="5" required placeholder="Type your message here..."></textarea>
         
         <button type="submit">Send Message</button>
     </form>
     
-    <p class="error-note"><strong>Important:</strong> After the first submission, check vorkachev2@gmail.com for a confirmation email from FormSubmit. You must click the confirmation link in that email before the form will work properly.</p>
+    <script>
+        // Show success message if redirected back
+        if (window.location.search.includes('sent=true')) {
+            document.getElementById('successMsg').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
