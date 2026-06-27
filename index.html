@@ -57,6 +57,7 @@
             max-width: 600px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             animation: slideUp 1s ease-out;
+            margin-bottom: 20px;
         }
 
         .todo-header {
@@ -165,6 +166,130 @@
             font-size: 14px;
         }
 
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 16px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group textarea,
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .form-group textarea:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .help-content {
+            line-height: 1.6;
+        }
+
+        .help-content h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .help-content ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .help-content li {
+            margin-bottom: 5px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -187,6 +312,19 @@
             .todo-add-btn {
                 width: 100%;
             }
+
+            .buttons-container {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
         }
     </style>
 </head>
@@ -204,6 +342,78 @@
         <ul class="todo-list" id="todoList"></ul>
         
         <div class="todo-stats" id="todoStats"></div>
+    </div>
+
+    <div class="buttons-container">
+        <button class="action-btn" onclick="openModal('feedbackModal')">Обратная связь</button>
+        <button class="action-btn" onclick="openModal('helpModal')">Помощь и техподдержка</button>
+        <button class="action-btn" onclick="openModal('suggestionsModal')">Пожелания по развитию</button>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('feedbackModal')">&times;</span>
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Обратная связь</h2>
+            <form id="feedbackForm">
+                <div class="form-group">
+                    <label for="feedbackName">Ваше имя:</label>
+                    <input type="text" id="feedbackName" required>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackEmail">Ваш email:</label>
+                    <input type="email" id="feedbackEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackMessage">Сообщение:</label>
+                    <textarea id="feedbackMessage" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('helpModal')">&times;</span>
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Помощь и техподдержка</h2>
+            <div class="help-content">
+                <h3>Инструкция по использованию:</h3>
+                <ul>
+                    <li><strong>Добавление задачи:</strong> Введите текст задачи в поле ввода и нажмите "Добавить" или Enter</li>
+                    <li><strong>Выполнение задачи:</strong> Нажмите на чекбокс слева от задачи</li>
+                    <li><strong>Удаление задачи:</strong> Нажмите кнопку "Удалить" справа от задачи</li>
+                    <li><strong>Статистика:</strong> Внизу отображается количество всех, выполненных и оставшихся задач</li>
+                </ul>
+                <h3>Техническая поддержка:</h3>
+                <p>Если у вас возникли проблемы или вопросы, напишите на почту: <a href="mailto:vorkachev2@gmail.com" style="color: #667eea;">vorkachev2@gmail.com</a></p>
+                <p>Мы ответим вам в кратчайшие сроки!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggestions Modal -->
+    <div id="suggestionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('suggestionsModal')">&times;</span>
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Пожелания по развитию</h2>
+            <form id="suggestionsForm">
+                <div class="form-group">
+                    <label for="suggestionName">Ваше имя:</label>
+                    <input type="text" id="suggestionName" required>
+                </div>
+                <div class="form-group">
+                    <label for="suggestionEmail">Ваш email:</label>
+                    <input type="email" id="suggestionEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="suggestionMessage">Ваши пожелания:</label>
+                    <textarea id="suggestionMessage" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Отправить</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -285,6 +495,53 @@
 
         // Начальная отрисовка
         renderTodos();
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Form submissions
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('feedbackName').value;
+            const email = document.getElementById('feedbackEmail').value;
+            const message = document.getElementById('feedbackMessage').value;
+            
+            // Create mailto link
+            const subject = encodeURIComponent(`Обратная связь от ${name}`);
+            const body = encodeURIComponent(`Имя: ${name}\nEmail: ${email}\n\nСообщение:\n${message}`);
+            window.location.href = `mailto:vorkachev2@gmail.com?subject=${subject}&body=${body}`;
+            
+            closeModal('feedbackModal');
+            this.reset();
+        });
+
+        document.getElementById('suggestionsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('suggestionName').value;
+            const email = document.getElementById('suggestionEmail').value;
+            const message = document.getElementById('suggestionMessage').value;
+            
+            // Create mailto link
+            const subject = encodeURIComponent(`Пожелания по развитию от ${name}`);
+            const body = encodeURIComponent(`Имя: ${name}\nEmail: ${email}\n\nПожелания:\n${message}`);
+            window.location.href = `mailto:vorkachev2@gmail.com?subject=${subject}&body=${body}`;
+            
+            closeModal('suggestionsModal');
+            this.reset();
+        });
     </script>
 </body>
 </html>
