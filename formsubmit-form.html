@@ -103,12 +103,12 @@
         <p class="description">Send a message to vorkachev2@gmail.com</p>
         
         <div class="info">
-            <strong>Note:</strong> This form uses Formspree service. After first submission, check your email to activate the form.
+            <strong>Form is active!</strong> Messages will be sent to vorkachev2@gmail.com
         </div>
         
         <div id="message" class="message"></div>
         
-        <form id="contactForm" action="https://formspree.io/f/vorkachev2@gmail.com" method="POST">
+        <form id="contactForm" action="https://formspree.io/f/b7e5c0f78466e1e2638fc8cead8639fa" method="POST">
             <input type="hidden" name="_subject" value="New message from website">
             
             <div>
@@ -145,8 +145,8 @@
             // Get form data
             var formData = new FormData(form);
             
-            // Send to Formspree
-            fetch('https://formspree.io/f/vorkachev2@gmail.com', {
+            // Send to Formspree with the verified endpoint
+            fetch('https://formspree.io/f/b7e5c0f78466e1e2638fc8cead8639fa', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -156,7 +156,7 @@
             .then(response => {
                 if (response.ok) {
                     messageDiv.className = 'message success';
-                    messageDiv.textContent = '✓ Message sent successfully! Check your email for confirmation if this is your first submission.';
+                    messageDiv.textContent = '✓ Message sent successfully! You will receive it at vorkachev2@gmail.com';
                     form.reset();
                 } else {
                     return response.json().then(data => {
