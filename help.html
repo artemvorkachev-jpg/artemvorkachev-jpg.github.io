@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Помощь и Техподдержка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .help-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .help-button:hover {
+            background-color: #0056b3;
+        }
+        .help-container {
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+        }
+        .help-container p {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="help-button" onclick="scrollToBottom()">Помощь и Техподдержка</button>
+    
+    <div class="help-container" id="helpText">
+        <p>Добро пожаловать в раздел помощи и техподдержки.</p>
+        <p>Здесь вы найдете ответы на часто задаваемые вопросы.</p>
+        <p>Если у вас есть проблема, пожалуйста, опишите её ниже.</p>
+        <p>Мы постараемся помочь вам как можно быстрее.</p>
+        <p>Для получения дополнительной информации, пожалуйста, обратитесь к нашей базе знаний.</p>
+        <p>Вы также можете связаться с нами по электронной почте или телефону.</p>
+        <p>Наша команда поддержки работает 24/7.</p>
+        <p>Спасибо за использование нашего сервиса!</p>
+        <p>Дополнительные ресурсы и руководства доступны в разделе "Документация".</p>
+        <p>Не стесняйтесь задавать вопросы.</p>
+    </div>
+
+    <script>
+        function scrollToBottom() {
+            var helpText = document.getElementById('helpText');
+            helpText.scrollTop = helpText.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
